@@ -1,0 +1,32 @@
+]<!DOCTYPE html>
+<html>
+<body>
+  <button id="ask">Ask LLM</button>
+  <pre id="out"></pre>
+
+  <script type="module">
+    import { getProfile } from "https://aipipe.org/aipipe.js";
+
+    const { token } = getProfile();
+    if (!token) location.href = "https://aipipe.org/login";
+
+    document.getElementById("ask").onclick = async () => {
+      const res = await fetch("https://aipipe.org/openrouter/v1/responses", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-4.1-nano",
+          input: "Output the following text exactly:\n\nYes"
+        })
+      });
+
+      const data = await res.json();
+      document.getElementById("out").textContent =
+        data.output_text || JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>
